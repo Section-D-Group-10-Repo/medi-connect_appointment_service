@@ -19,16 +19,16 @@ A modern Node.js TypeScript template with essential configurations for building 
 
 ### Installation
 
-1. Clone the repository:
+1. Clone the repository and navigate to the project folder:
    ```bash
    git clone https://github.com/yourusername/node-ts-template.git
    cd node-ts-template
 
-2. Install the dependencies:
+2. Install project dependencies:
     ```bash
    npm install
 
-3. Set up your environment variables:
+3. Configure environment variables:
    - Create a .env file for production:
       ```bash
      touch .env
