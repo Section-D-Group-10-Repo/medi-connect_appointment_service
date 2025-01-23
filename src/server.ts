@@ -1,6 +1,6 @@
 import { createServer } from "http";
-import app from "./app";
 import { ENV } from "./config";
+import app from "./app";
 
 const server = createServer(app);
 

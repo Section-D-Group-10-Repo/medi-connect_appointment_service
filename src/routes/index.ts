@@ -1,5 +1,5 @@
-import helloRouter from "./hello.route";
+import appointmentRouter from "./appointment.routes";
 
 export default {
-  helloRouter,
+  appointmentRouter,
 };
