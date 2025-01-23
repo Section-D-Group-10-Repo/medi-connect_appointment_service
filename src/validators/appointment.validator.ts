@@ -9,11 +9,10 @@ export const createAppointmentSchema = z.object({
   doctorId: z.string({ message: "Doctor ID must be a string." }).min(1, {
     message: "Doctor ID is required.",
   }),
-  date: z
-    .string({ message: "Date must be a valid ISO string." })
-    .refine((date) => !isNaN(Date.parse(date)), {
-      message: "Invalid date format.",
-    }),
+  startDate: z.coerce.date({ message: "Start date isn't a valid date." }),
+  duration: z.number({ message: "Duration must be a number" }).positive({
+    message: "Duration must be a positive integer.",
+  }),
 });
 
 export const updateAppointmentStatusSchema = z.object({
@@ -29,12 +28,6 @@ export const updateAppointmentStatusSchema = z.object({
 });
 
 export const patientSatisfactionSchema = z.object({
-  patientId: z.string({ message: "Patient ID must be a string." }).min(1, {
-    message: "Patient ID is required.",
-  }),
-  doctorId: z.string({ message: "Doctor ID must be a string." }).min(1, {
-    message: "Doctor ID is required.",
-  }),
   patientComment: z
     .string({ message: "Patient comment must be a string." })
     .max(500, { message: "Patient comment cannot exceed 500 characters." })
