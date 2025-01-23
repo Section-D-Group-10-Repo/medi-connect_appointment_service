@@ -15,11 +15,13 @@ enum APPOINTMENT_STATUS {
 }
 
 model Appointment {
-  id        String             @id @default(uuid())
+  id        String   @id @default(uuid())
   patientId String
   doctorId  String
-  date      DateTime           @unique
-  status    APPOINTMENT_STATUS @default(PENDING)
+  startDate DateTime @unique
+  duration  Int
+
+  status APPOINTMENT_STATUS @default(PENDING)
 
   patientComment      String?
   patientSatisfaction Int?

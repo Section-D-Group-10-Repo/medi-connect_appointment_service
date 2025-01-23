@@ -1,67 +1,43 @@
-import axios from "axios";
-import { asyncWrapper, RouteError } from "../utils";
-import { ROLE } from "../constants";
+import { asyncWrapper, handleTC, RouteError } from "../utils";
+import { Role, User } from "../types";
+import { verifyUser } from "../services/auth";
 
 // To satisfy ts compiler
 declare global {
   namespace Express {
     interface Request {
-      user?: {
-        _id: string;
-        _role: ROLE;
-      };
+      user?: User;
     }
   }
 }
 
-const verifyUser = async (token: string) => {
-  const response = await axios.get<{
-    _id: string;
-    _role: ROLE;
-  }>(`/api/v1/auth/verify`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-
-  return response.data;
-};
-
 const authenticationMiddleWare = asyncWrapper(async (req, _, next) => {
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer "))
-    throw RouteError.Unauthorized("You are't authenticated");
-
-  const token = authHeader.replace("Bearer ", "");
+  const token = req.cookies.token;
 
   if (!token) throw RouteError.Unauthorized("You are't authenticated");
 
-  const payload = await verifyUser(token);
+  const data = await verifyUser(token);
 
-  if (!payload) throw RouteError.Unauthorized("Invalid token");
+  if (!data.success) throw RouteError.Unauthorized("Invalid token");
 
-  req.user = payload;
+  req.user = data.result;
   next();
 });
 
-const roleAuthenticationMiddleware = (roles: ROLE[]) => {
+const roleAuthenticationMiddleware = (roles: Role[]) => {
   return asyncWrapper(async (req, _, next) => {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer "))
-      throw RouteError.Unauthorized("You are't authenticated");
-
-    const token = authHeader.replace("Bearer ", "");
+    const token = req.cookies.token;
 
     if (!token) throw RouteError.Unauthorized("You are't authenticated");
 
-    const payload = await verifyUser(token);
+    const data = await verifyUser(token);
 
-    if (!payload) throw RouteError.Unauthorized("Invalid token");
+    if (!data.success) throw RouteError.Unauthorized("Invalid token");
 
-    if (!roles.includes(payload._role))
+    if (!roles.includes(data.result.role))
       throw RouteError.Unauthorized("You don't have the required permissions.");
 
-    req.user = payload;
+    req.user = data.result;
 
     next();
   });

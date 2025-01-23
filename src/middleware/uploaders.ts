@@ -1,9 +1,7 @@
 import multer from "multer";
 import path from "path";
 import { Request } from "express";
-import { BadRequest } from "../utils/errors";
 import { fsUtils, RouteError } from "../utils";
-
 const ALLOWED_IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg"];
 
 const profileStorage = multer.diskStorage({
@@ -13,7 +11,7 @@ const profileStorage = multer.diskStorage({
     cb(
       success
         ? null
-        : new RouteError.InternalServerError(
+        : RouteError.InternalServerError(
             "Error occured while creating a folder for profile images!"
           ),
       destinationPath
@@ -32,7 +30,7 @@ const fileFilter = (
   const extension = path.extname(file.originalname).toLowerCase();
 
   if (!ALLOWED_IMAGE_EXTENSIONS.includes(extension))
-    cb(new BadRequest("Unsupported image format"), false);
+    cb(RouteError.BadRequest("Unsupported image format"), false);
   else cb(null, true);
 };
 
